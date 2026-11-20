@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Documentation — Rudo.ai</title>
+<meta name="description" content="Install Rudo.ai locally with Docker Compose, configure secrets, connect an AI provider, and run your first scan.">
+<link rel="canonical" href="https://rudo.ai/docs.html">
+<meta property="og:title" content="Rudo.ai — AI Security Assessment System">
+<meta property="og:description" content="Unified open-source scanning. An AI brain that ranks and explains what it found. Self-hosted by default.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://rudo.ai/assets/img/logo-512.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" sizes="32x32" href="./assets/img/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="./assets/img/favicon-16.png">
+<link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./assets/css/styles.css">
+
+</head>
+<body class="">
+
+<nav class="nav">
+  <div class="container">
+    <a class="brand" href="./">
+      <img src="./assets/img/rudo-logo.png" alt="Rudo.ai">
+      <span>RUDO<span class="brand-ai">.ai</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="./features.html">Features</a></li>
+      <li><a href="./pricing.html">Pricing</a></li>
+      <li><a href="./docs.html">Docs</a></li>
+      <li><a href="./blog/">Blog</a></li>
+      <li><a href="./about.html">About</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a class="nav-gh" href="https://github.com/mvzen-ash/rudo.ai" aria-label="Rudo.ai on GitHub" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49 0-.24-.01-1.04-.01-1.88-2.78.62-3.37-1.21-3.37-1.21-.46-1.19-1.11-1.51-1.11-1.51-.9-.63.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.89 1.57 2.34 1.12 2.91.86.09-.66.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.04 1.03-2.76-.1-.26-.45-1.3.1-2.72 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.42.2 2.46.1 2.72.64.72 1.03 1.64 1.03 2.76 0 3.94-2.34 4.8-4.57 5.06.36.32.68.96.68 1.94 0 1.4-.01 2.53-.01 2.87 0 .27.18.6.69.49A10.26 10.26 0 0 0 22 12.25C22 6.58 17.52 2 12 2Z"/></svg></a>
+      <a class="btn btn-ghost btn-sm" href="./docs.html">View Docs</a>
+      <a class="btn btn-primary btn-sm" href="./download.html" data-coming-soon>Get Rudo.ai</a>
+    </div>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
+</nav>
+
+
+
+<header class="page-head">
+  <div class="container">
+    <span class="eyebrow">Documentation</span>
+    <h1>Get Rudo.ai running locally</h1>
+    <p class="lede">This covers the self-hosted Docker Compose build. Desktop-app docs will land here once downloads open.</p>
+  </div>
+</header>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="docs-layout">
+      <nav class="docs-toc">
+        <a href="#requirements">System Requirements</a>
+        <a href="#install">Installation</a>
+        <a href="#secrets">Configure Secrets</a>
+        <a href="#ai">Connect an AI Provider</a>
+        <a href="#first-scan">Run Your First Scan</a>
+        <a href="#troubleshooting">Troubleshooting</a>
+      </nav>
+
+      <div class="docs-body prose">
+        <h2 id="requirements">System Requirements</h2>
+        <ul>
+          <li>Docker &amp; Docker Compose (Docker Desktop on Windows/macOS, or Docker Engine on Linux)</li>
+          <li>4 GB RAM minimum, 8 GB recommended — more if you run AI models locally via Ollama</li>
+          <li>A target you're explicitly authorized to scan. Rudo.ai rejects internal/localhost targets by default.</li>
+        </ul>
+
+        <h2 id="install">Installation</h2>
+        <p>Clone the repository and copy the example environment file:</p>
+        <pre><code>git clone https://github.com/mvzen-ash/rudo.ai.git
+cd rudo.ai
+cp .env.example .env</code></pre>
+        <p>Start the full stack:</p>
+        <pre><code># macOS / Linux
+./scripts/run_platform.sh
+
+# Windows
+scripts\run_platform.bat</code></pre>
+        <p>This brings up the React frontend, the ASP.NET Core API, the internal Python tool-orchestration service, and PostgreSQL, all behind nginx. Once containers are healthy, open <code>http://localhost</code>.</p>
+        <div class="note">First boot pulls and builds several containers, including the one running the ten scanning tools the orchestration service drives — the first <code>docker compose up</code> can take a few minutes.</div>
+
+        <h2 id="secrets">Configure Secrets</h2>
+        <p>Two values in <code>.env</code> need to be set before first boot — they aren't safe defaults, they're placeholders:</p>
+        <pre><code>POSTGRES_PASSWORD=change-me-to-something-random
+Jwt__Key=change-me-to-a-long-random-string</code></pre>
+        <div class="note">The double underscore in <code>Jwt__Key</code> isn't a typo — ASP.NET Core maps <code>Section__Key</code> environment variables onto nested configuration (here, <code>Jwt:Key</code>). Leave it out and the API fails its startup configuration check instead of booting with an insecure default.</div>
+        <div class="note warn">PostgreSQL only applies the password in <code>.env</code> the <em>first</em> time its data volume is created. If you change it after the first boot, wipe the volume with <code>docker compose down -v</code> and start again — otherwise the API container will fail to authenticate against the database.</div>
+
+        <h2 id="ai">Connect an AI Provider</h2>
+        <p>AI provider setup happens entirely in the app — no further <code>.env</code> edits needed. Open <strong>Settings</strong> after logging in and choose one:</p>
+        <ul>
+          <li><strong>Cloud</strong> — a managed provider (Groq) using your own API key.</li>
+          <li><strong>Custom (BYOK)</strong> — any OpenAI-compatible endpoint, e.g. OpenRouter, with your key, base URL and model name.</li>
+          <li><strong>Local (Ollama)</strong> — point at an Ollama instance running on your machine or network. Nothing leaves your infrastructure.</li>
+        </ul>
+        <div class="note">Running Ollama on the host while Rudo.ai runs in Docker? Start Ollama with <code>OLLAMA_HOST=0.0.0.0 ollama serve</code> — by default Ollama only binds to <code>127.0.0.1</code>, which a container reaching it via <code>host.docker.internal</code> can't connect to.</div>
+
+        <h2 id="first-scan">Run Your First Scan</h2>
+        <ol>
+          <li>Log in and create an account from the Rudo.ai UI.</li>
+          <li>Add a target you're authorized to test, under <strong>Targets</strong>.</li>
+          <li>Start a scan — the Orchestrator sequences all applicable tools automatically.</li>
+          <li>Watch results populate in real time, then open <strong>Ask Rudo.ai</strong> to ask about any finding.</li>
+          <li>Export a PDF report, or compare against a previous scan with Scan-Diff.</li>
+        </ol>
+
+        <h2 id="troubleshooting">Troubleshooting</h2>
+        <p><strong>White page at <code>http://localhost</code>?</strong> Check <code>docker compose logs nginx</code> and <code>docker compose logs api</code> for the actual error — most often this is the API container exiting on startup because of the <code>Jwt__Key</code> or Postgres-password issues above.</p>
+        <p><strong><code>npipe</code> connection error on Windows?</strong> Docker Desktop isn't running. Start it, confirm with <code>docker info</code>, and make sure it's set to Linux containers.</p>
+        <p>Still stuck? Open an issue on <a href="https://github.com/mvzen-ash/rudo.ai/issues" style="color:var(--accent-2);" target="_blank" rel="noopener">GitHub</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="./" style="margin-bottom:14px;">
+          <img src="./assets/img/rudo-logo.png" alt="Rudo.ai">
+          <span>RUDO<span class="brand-ai">.ai</span></span>
+        </a>
+        <p>AI Security Assessment System built on open-source scanning tools. Self-hosted. Built by the BadSectors Team.</p>
+        <a class="nav-gh" href="https://github.com/mvzen-ash/rudo.ai" target="_blank" rel="noopener" aria-label="Rudo.ai on GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49 0-.24-.01-1.04-.01-1.88-2.78.62-3.37-1.21-3.37-1.21-.46-1.19-1.11-1.51-1.11-1.51-.9-.63.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.89 1.57 2.34 1.12 2.91.86.09-.66.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.04 1.03-2.76-.1-.26-.45-1.3.1-2.72 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.42.2 2.46.1 2.72.64.72 1.03 1.64 1.03 2.76 0 3.94-2.34 4.8-4.57 5.06.36.32.68.96.68 1.94 0 1.4-.01 2.53-.01 2.87 0 .27.18.6.69.49A10.26 10.26 0 0 0 22 12.25C22 6.58 17.52 2 12 2Z"/></svg></a>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="./features.html">Features</a></li>
+          <li><a href="./pricing.html">Pricing</a></li>
+          <li><a href="./download.html">Download</a></li>
+          <li><a href="./changelog.html">Changelog</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="./docs.html">Documentation</a></li>
+          <li><a href="./blog/">Blog</a></li>
+          <li><a href="https://github.com/mvzen-ash/rudo.ai" target="_blank" rel="noopener">GitHub</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="./about.html">About</a></li>
+          <li><a href="./contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="./legal/terms.html">Terms of Service</a></li>
+          <li><a href="./legal/privacy.html">Privacy Policy</a></li>
+          <li><a href="./legal/acceptable-use.html">Acceptable Use</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <small>&copy; <span data-year></span> BadSectors Team. Rudo.ai is provided for authorized security testing only.</small>
+      <small>Made in Cairo 🇪🇬</small>
+    </div>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="coming-soon-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal">
+    <button class="modal-close" data-modal-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 5l14 14M19 5 5 19"/></svg></button>
+    <div class="modal-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg></div>
+    <h3 id="modal-title">Rudo.ai isn't public yet</h3>
+    <p>The desktop app and licensing flow are still in development. Star the repo or watch releases to get notified the moment downloads open.</p>
+    <div class="modal-actions">
+      <a class="btn btn-primary btn-block" href="https://github.com/mvzen-ash/rudo.ai" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5 14.6 9l6.9.5-5.3 4.5 1.7 6.6L12 17.3 6.1 20.6l1.7-6.6L2.5 9.5 9.4 9 12 2.5Z"/></svg> Star on GitHub</a>
+      <button class="btn btn-ghost btn-block" data-modal-close>Maybe later</button>
+    </div>
+  </div>
+</div>
+
+<script src="./assets/js/main.js"></script>
+
+</body>
+</html>
